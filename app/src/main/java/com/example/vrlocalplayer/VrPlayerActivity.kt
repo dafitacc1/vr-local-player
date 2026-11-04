@@ -290,15 +290,6 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         setOverlayVisible(timelineBar.visibility != View.VISIBLE)
     }
 
-    override fun onVideoTransform(scale: Float, panX: Float, panY: Float) {
-        currentValues = currentValues.copy(scale = scale, panX = panX, panY = panY)
-        refreshViewSliders()
-    }
-
-    override fun onVideoTransformEnd() {
-        persist()
-    }
-
     private fun refreshViewSliders() {
         seekZoom.progress = fractionToProgress(currentValues.scale, VrSettings.SCALE_MIN, VrSettings.SCALE_MAX, seekZoom.max)
         seekPanX.progress = fractionToProgress(currentValues.panX, VrSettings.PAN_MIN, VrSettings.PAN_MAX, seekPanX.max)
