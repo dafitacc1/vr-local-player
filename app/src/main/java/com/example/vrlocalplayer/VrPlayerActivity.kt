@@ -30,6 +30,9 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         const val EXTRA_VIDEO_URI = "extra_video_uri"
         const val EXTRA_DUPLICATE_SBS = "extra_duplicate_sbs"
 
+        // Debug: show a short message with what the launching intent delivered. Set to false to turn it off.
+        private const val DEBUG_INTENT_TOAST = true
+
         private const val TICK_MS = 500L
         private const val SAVE_EVERY_TICKS = 10
         private const val AUTO_HIDE_MS = 4_000L
@@ -102,9 +105,20 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         }
         videoName = PlaybackHistory.displayName(this, uri)
 
+        val hasSbsExtra = intent.hasExtra(EXTRA_DUPLICATE_SBS)
         val requestedDuplicate = intent.getBooleanExtra(EXTRA_DUPLICATE_SBS, true)
         currentValues = VrSettings.load(this, requestedDuplicate)
         chosenDuplicate = currentValues.duplicateSbs
+        if (hasSbsExtra) {
+            // The launching intent decides SBS for this launch only. chosenDuplicate keeps the saved
+            // value, so the extra is never written over the viewer's own setting.
+            chosenDuplicate = VrSettings.load(this, true).duplicateSbs
+            currentValues = currentValues.copy(duplicateSbs = requestedDuplicate)
+        }
+        if (DEBUG_INTENT_TOAST) {
+            val sbs = if (hasSbsExtra) requestedDuplicate.toString() else "not sent"
+            Toast.makeText(this, "action: ${intent.action}\nuri: $uri\nsbs extra: $sbs", Toast.LENGTH_LONG).show()
+        }
         savedView = VrSettings.loadView(this, uri.toString())
         savedView?.let { currentValues = currentValues.copy(scale = it.scale, panX = it.panX, panY = it.panY) }
 
