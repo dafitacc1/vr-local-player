@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                 PlaybackHistory.remove(this, entry.uri)
                 try {
                     contentResolver.releasePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                } catch (_: SecurityException) {
+                } catch (_: Exception) {
                 }
                 Toast.makeText(this, R.string.recent_removed, Toast.LENGTH_SHORT).show()
                 renderRecents()

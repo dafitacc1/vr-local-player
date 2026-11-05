@@ -101,7 +101,8 @@ class VrPlayerActivity : AppCompatActivity(), StereoGLSurfaceView.GestureListene
         videoUri = uri
         try {
             contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        } catch (_: SecurityException) {
+        } catch (_: Exception) {
+            // Web (http/https) addresses have no permission to keep; local files may refuse it too.
         }
         videoName = PlaybackHistory.displayName(this, uri)
 
